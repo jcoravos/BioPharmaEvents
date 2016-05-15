@@ -13,25 +13,28 @@ Use "help(pymysql)" and "help(pandas.io.sql)" for more info.
 import pymysql
 import sqlalchemy
 _host = '73.17.18.177'
-_user = ''
-_password = ''
 #_database = 'biopharma'
+password_file = 'DBCredential.txt'
 
 def create_engine(dbname):
-    f = open('DBCredential.txt','r')
+    _user = ''
+    _password = ''
+    f = open(password_file,'r')
     for line in f:
         if line.startswith('#'):
             continue
-        data = line.rtrim().split(':')
+        data = line.rstrip().split(':')
         if data[0] == 'user':
             _user = data[1]
-        elif: line[0] == 'password':
+        elif data[0] == 'password':
             _password = data[1]
+        else:
+            "Could not read credentials from " + password_file
 
     if _user == '':
-        raise RunTimeError("user credential not found in DBCredential.txt")
+        raise RunTimeError("user credential not found in " + password_file)
     if _password == '':
-        raise RunTimeError("password credential not found in DBCredential.txt")
+        raise RunTimeError("password credential not found in " + password_file)
     
     return sqlalchemy.create_engine("mysql+pymysql://" + _user + ":" + _password + "@" + _host + '/' + dbname)
 
